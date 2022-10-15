@@ -1,8 +1,10 @@
 import os
-from fastapi import FastAPI, HTTPException, File, UploadFile
+from fastapi import FastAPI, HTTPException, File, Request, UploadFile
+from fastapi.templating import Jinja2Templates
+from jinja2 import Template
 from pydantic import BaseModel
 import sys
-from gcp_helpers import download_blob, upload_blob
+from gcp_helpers import upload_blob
 from sound_mapper_helpers import textToSound, addSoundToImage
 from data import IMAGE_DOWNLOAD_PATH, GCP_BUCKET_NAME, TEMP_FILES_PATH, COMBINED_SOUND_FILENAME, \
     COMBINED_IMAGESOUND_FILENAME
@@ -10,6 +12,7 @@ from tokenizer import get_tokens
 from image_to_text import predict_step
 
 app = FastAPI()
+templates = Jinja2Templates(directory="templates")
 
 class UploadConfirmation(BaseModel):
     filename: str
@@ -17,8 +20,8 @@ class UploadConfirmation(BaseModel):
 
 
 @app.get("/")
-def read_root():
-    raise HTTPException(status_code=404, detail="Welcome! Not implemented yet :)")
+def main(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.post("/upload/", response_model=UploadConfirmation)
@@ -50,10 +53,7 @@ async def upload(file: UploadFile = File(...)):
     # COMBINE IMAGE+SOUND
     addSoundToImage(input_img_path, os.path.join(TEMP_FILES_PATH,COMBINED_SOUND_FILENAME),
                     os.path.join(TEMP_FILES_PATH,COMBINED_IMAGESOUND_FILENAME))
+
+    upload_blob(GCP_BUCKET_NAME, os.path.join(TEMP_FILES_PATH,COMBINED_IMAGESOUND_FILENAME))
     # RETURN VIDEO REQUEST
     return {"filename": file.filename, "contenttype": file.content_type}
-
-
-    # EXAMPLE GCP FUNCTIONS TO UPLOAD AND DOWNLOAD DATA
-    # upload_blob(GCP_BUCKET_NAME,input_img_path)
-    # download_blob(GCP_BUCKET_NAME, file.filename, './')
