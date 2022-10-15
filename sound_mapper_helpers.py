@@ -1,10 +1,16 @@
 import json
 import os
 from pydub import AudioSegment
-from data import SOUND_PATH, JSON_DICT_PATH, TEMP_FILES_PATH, INTENSITY_MAP_PATH
+
+from gcp_helpers import download_blob
+from data import SOUND_PATH, JSON_DICT_PATH, TEMP_FILES_PATH, INTENSITY_MAP_PATH, GCP_BUCKET_NAME, \
+    COMBINED_SOUND_FILENAME, JSON_FILENAME, INTENSITY_MAP_FILENAME
 import pandas as pd
 import json
 import random
+from moviepy.editor import AudioFileClip, ImageClip
+
+
 
 
 def increaseDuration(sound, factor):
@@ -16,14 +22,17 @@ def increaseDuration(sound, factor):
 def textToSound(textArray):
     filePath = SOUND_PATH
 
-    # Open JSON file to dictionary. # fetch from API ///////////////////////////////////////////////////////////
-    jsonFileName = JSON_DICT_PATH
+    # Open JSON file to dictionary.
+    # fetch from API ///////////////////////////////////////////////////////////
+    download_blob(GCP_BUCKET_NAME, JSON_DICT_PATH+JSON_FILENAME, './')
+    jsonFileName = JSON_DICT_PATH + JSON_FILENAME
     with open(jsonFileName) as json_file:
         jsonDict = json.load(json_file)
 
     # Set loudness based on intensity map
     # fetch from API ///////////////////////////////////////////////////////////
-    jsonFileName = INTENSITY_MAP_PATH
+    download_blob(GCP_BUCKET_NAME, INTENSITY_MAP_PATH+INTENSITY_MAP_FILENAME, './')
+    jsonFileName = INTENSITY_MAP_PATH + INTENSITY_MAP_FILENAME
     with open(jsonFileName) as json_file:
         intensityMap = json.load(json_file)
 
@@ -37,8 +46,16 @@ def textToSound(textArray):
 
     if not os.path.isdir(TEMP_FILES_PATH):
         os.mkdir(TEMP_FILES_PATH)
-    combinedSound.export(TEMP_FILES_PATH + "/combinedSound.wav", format='wav')
+    combinedSound.export(TEMP_FILES_PATH + COMBINED_SOUND_FILENAME, format='wav')
     return combinedSound
+
+def addSoundToImage(imagePath, audioPath, outputPath):
+    audio_clip = AudioFileClip(audioPath)
+    image_clip = ImageClip(imagePath)
+    video_clip = image_clip.set_audio(audio_clip)
+    video_clip.duration = audio_clip.duration
+    video_clip.fps = 1
+    video_clip.write_videofile(outputPath)
 
 
 # Create Json file

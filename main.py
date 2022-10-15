@@ -3,8 +3,9 @@ from fastapi import FastAPI, HTTPException, File, UploadFile
 from pydantic import BaseModel
 import sys
 from gcp_helpers import download_blob, upload_blob
-from sound_mapper_helpers import textToSound
-from data import IMAGE_DOWNLOAD_PATH, GCP_BUCKET_NAME
+from sound_mapper_helpers import textToSound, addSoundToImage
+from data import IMAGE_DOWNLOAD_PATH, GCP_BUCKET_NAME, TEMP_FILES_PATH, COMBINED_SOUND_FILENAME, \
+    COMBINED_IMAGESOUND_FILENAME
 
 app = FastAPI()
 
@@ -37,11 +38,13 @@ async def upload(file: UploadFile = File(...)):
     # Tokenizer
     textArray = ["dog", "wind", "train"]
 
-    # TXT2SOUND
+    # TXT2SOUND AND SOUNDSYNTH
     sound = textToSound(textArray)
 
-    # SOUNDSYNTH
+
     # COMBINE IMAGE+SOUND
+    addSoundToImage(input_img_path, TEMP_FILES_PATH + COMBINED_SOUND_FILENAME,
+                    TEMP_FILES_PATH+COMBINED_IMAGESOUND_FILENAME)
     # RETURN VIDEO REQUEST
     return {"filename": file.filename, "contenttype": file.content_type}
 
