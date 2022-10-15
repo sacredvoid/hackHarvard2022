@@ -59,13 +59,13 @@ async def upload(file: UploadFile = File(...)):
         combinedSound.export(TEMP_FILES_PATH + COMBINED_SOUND_FILENAME, format='wav')
 
     # COMBINE IMAGE+SOUND
-    addSoundToImage(input_img_path, os.path.join(TEMP_FILES_PATH,COMBINED_SOUND_FILENAME),
-                    os.path.join(TEMP_FILES_PATH,COMBINED_IMAGESOUND_FILENAME))
+    addSoundToImage(input_img_path, TEMP_FILES_PATH + COMBINED_SOUND_FILENAME,
+                    TEMP_FILES_PATH + COMBINED_IMAGESOUND_FILENAME)
 
-    upload_blob(GCP_BUCKET_NAME, os.path.join(TEMP_FILES_PATH,COMBINED_IMAGESOUND_FILENAME))
+    upload_blob(GCP_BUCKET_NAME, TEMP_FILES_PATH + COMBINED_IMAGESOUND_FILENAME)
 
     # DELETE AUDIO
-    os.remove(TEMP_FILES_PATH + COMBINED_SOUND_FILENAME)
+    #os.remove(TEMP_FILES_PATH + COMBINED_SOUND_FILENAME)
 
     # RETURN VIDEO REQUEST
     return {"filename": file.filename, "contenttype": file.content_type}
