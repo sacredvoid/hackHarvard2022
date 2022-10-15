@@ -5,7 +5,7 @@ from pydub import AudioSegment
 
 from gcp_helpers import download_blob
 from data import SOUND_PATH, JSON_DICT_PATH, TEMP_FILES_PATH, INTENSITY_MAP_PATH, GCP_BUCKET_NAME, \
-    COMBINED_SOUND_FILENAME, JSON_FILENAME, INTENSITY_MAP_FILENAME
+    COMBINED_SOUND_FILENAME, JSON_FILENAME, INTENSITY_MAP_FILENAME, NOISE_FILE_PATH
 import pandas as pd
 import json
 import random
@@ -44,11 +44,11 @@ def textToSound(textArray):
             break
         except:
             #Mapping doesnt exist, skip
+            print("not found ", t)
             c+=1
 
-    if c==len(textArray)-1:
+    if c==len(textArray):
         return -1
-
 
     for t in textArray[1:]:
         try:
@@ -58,16 +58,16 @@ def textToSound(textArray):
             sound1 = sound1.overlay(sound2)
         except:
             #Mapping doesnt exist, skip
-            pass
-        
+            print("not found ", t)
+
     if sound1 == 0:
         return -1
-    else:
-        combinedSound = increaseDuration(sound1, 2)
-        if not os.path.isdir(TEMP_FILES_PATH):
-            os.mkdir(TEMP_FILES_PATH)
-        combinedSound.export(TEMP_FILES_PATH + COMBINED_SOUND_FILENAME, format='wav')
-        return combinedSound
+
+    combinedSound = increaseDuration(sound1, 2)
+    if not os.path.isdir(TEMP_FILES_PATH):
+        os.mkdir(TEMP_FILES_PATH)
+    combinedSound.export(TEMP_FILES_PATH + COMBINED_SOUND_FILENAME, format='wav')
+    return combinedSound
 
 def addSoundToImage(imagePath, audioPath, outputPath):
     audio_clip = AudioFileClip(audioPath)
