@@ -22,7 +22,13 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById("vid").style.display = "inline";
+                    var vid_element = document.getElementById("vid");
+                    var source = document.createElement('source');
+                    source.setAttribute('src','https://storage.googleapis.com/audio-data-hack/combinedImageSound.mp4')
+                    source.setAttribute('type','video/mp4')
+                    vid_element.style.display = "inline"
+                    vid_element.appendChild(source);
+                    vid_element.play();
                 })
                 .catch(error => {
                     console.error(error);
@@ -35,10 +41,4 @@
 Input:<br>
 <img height="200"> <br>
 Output:<br>
-<video id="vid" controls width="250" hidden>
-    <source src="https://storage.googleapis.com/audio-data-hack/combinedImageSound.mp4"
-            type="video/mp4">
-    <!-- Download the 
-    <a href="./databaseFiles/tempFiles/combinedImageSound.mp4">MP4</a>
-    video. -->
-</video>
+<video id="vid" controls width="250" hidden></video>
