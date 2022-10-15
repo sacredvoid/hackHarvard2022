@@ -7,6 +7,7 @@ from sound_mapper_helpers import textToSound, addSoundToImage
 from data import IMAGE_DOWNLOAD_PATH, GCP_BUCKET_NAME, TEMP_FILES_PATH, COMBINED_SOUND_FILENAME, \
     COMBINED_IMAGESOUND_FILENAME
 from tokenizer import get_tokens
+from image_to_text import predict_step
 
 app = FastAPI()
 
@@ -35,10 +36,12 @@ async def upload(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=str(e))
 
     # IMG2TXT
+    path = '/home/aakash/Downloads/photo-1599161954112-300ca11ca7da.jpeg'
+    text = predict_step([path])
 
     # Tokenizer
-    text = 'dog is barking in the backyard'
-    textArray = get_tokens(text)
+    
+    textArray = get_tokens(text[0])
     print(textArray)
     # TXT2SOUND AND SOUNDSYNTH
     sound = textToSound(textArray)
