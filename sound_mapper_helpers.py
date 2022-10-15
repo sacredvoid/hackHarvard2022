@@ -18,6 +18,7 @@ def increaseDuration(sound, factor):
 
 
 def textToSound(textArray):
+    print(textArray)
     filePath = SOUND_PATH
     if not os.path.isdir(filePath):
         os.makedirs(filePath)
@@ -33,13 +34,21 @@ def textToSound(textArray):
     jsonFileName = INTENSITY_MAP_PATH + INTENSITY_MAP_FILENAME
     with open(jsonFileName) as json_file:
         intensityMap = json.load(json_file)
-    
-    try:
-        download_blob(GCP_BUCKET_NAME,filePath + jsonDict[textArray[0]][0], './')
-        sound1 = AudioSegment.from_file(filePath + jsonDict[textArray[0]][0])  # First sound from textArray
-    except:
-        #Mapping doesnt exist, skip
-        pass
+
+    c = 0
+    sound1 = 0
+    for t in textArray:
+        try:
+            download_blob(GCP_BUCKET_NAME, filePath + jsonDict[t][0], './')
+            sound1 = AudioSegment.from_file(filePath + jsonDict[t][0])  # First sound from textArray
+            break
+        except:
+            #Mapping doesnt exist, skip
+            c+=1
+
+    if c==len(textArray)-1:
+        return -1
+
 
     for t in textArray[1:]:
         try:
@@ -51,12 +60,14 @@ def textToSound(textArray):
             #Mapping doesnt exist, skip
             pass
         
-    combinedSound = increaseDuration(sound1, 2)
-
-    if not os.path.isdir(TEMP_FILES_PATH):
-        os.mkdir(TEMP_FILES_PATH)
-    combinedSound.export(TEMP_FILES_PATH + COMBINED_SOUND_FILENAME, format='wav')
-    return combinedSound
+    if sound1 == 0:
+        return -1
+    else:
+        combinedSound = increaseDuration(sound1, 2)
+        if not os.path.isdir(TEMP_FILES_PATH):
+            os.mkdir(TEMP_FILES_PATH)
+        combinedSound.export(TEMP_FILES_PATH + COMBINED_SOUND_FILENAME, format='wav')
+        return combinedSound
 
 def addSoundToImage(imagePath, audioPath, outputPath):
     audio_clip = AudioFileClip(audioPath)

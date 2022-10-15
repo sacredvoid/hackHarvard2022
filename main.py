@@ -39,16 +39,14 @@ async def upload(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=str(e))
 
     # IMG2TXT
-    path = '/home/aakash/Downloads/photo-1599161954112-300ca11ca7da.jpeg'
+    path = input_img_path
     text = predict_step([path])
 
     # Tokenizer
-    
     textArray = get_tokens(text[0])
-    print(textArray)
+
     # TXT2SOUND AND SOUNDSYNTH
     sound = textToSound(textArray)
-
 
     # COMBINE IMAGE+SOUND
     addSoundToImage(input_img_path, os.path.join(TEMP_FILES_PATH,COMBINED_SOUND_FILENAME),
@@ -56,4 +54,6 @@ async def upload(file: UploadFile = File(...)):
 
     upload_blob(GCP_BUCKET_NAME, os.path.join(TEMP_FILES_PATH,COMBINED_IMAGESOUND_FILENAME))
     # RETURN VIDEO REQUEST
+
     return {"filename": file.filename, "contenttype": file.content_type}
+
