@@ -42,13 +42,11 @@ async def upload(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=str(e))
 
     # IMG2TXT
-    path = input_img_path
-    text = predict_step([path])
+    text = predict_step(input_img_path)
 
     # Tokenizer
-    textArray = get_tokens(text[0])
-    #textArray.append("wind")
-
+    textArray = get_tokens(text)
+    
     # TXT2SOUND AND SOUNDSYNTH
     sound = textToSound(textArray)
     if sound == -1:
