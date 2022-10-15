@@ -23,3 +23,5 @@ archive.zip
 # vim temporary files
 *~
 .*.sw?
+
+uploaded_images
