@@ -1,6 +1,6 @@
 import requests
 url = 'http://127.0.0.1:8000/upload/'
-files = {'image': open(r'C:\Users\saman\Downloads\WhatsApp Image 2022-10-14 at 9.13.31 PM.jpeg', 'rb')}
+files = {'image': open(r'C:\Users\rajat\Postman Agent\files\Boston Pic.jpeg', 'rb')}
 resp = requests.post(url, files=files)
 
 name_img = 'try.jpeg'
