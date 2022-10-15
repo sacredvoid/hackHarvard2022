@@ -6,6 +6,7 @@ from gcp_helpers import download_blob, upload_blob
 from sound_mapper_helpers import textToSound, addSoundToImage
 from data import IMAGE_DOWNLOAD_PATH, GCP_BUCKET_NAME, TEMP_FILES_PATH, COMBINED_SOUND_FILENAME, \
     COMBINED_IMAGESOUND_FILENAME
+from tokenizer import get_tokens
 
 app = FastAPI()
 
@@ -25,7 +26,7 @@ async def upload(file: UploadFile = File(...)):
         os.mkdir(IMAGE_DOWNLOAD_PATH)
     try:
         contents = await file.read()
-        input_img_path = IMAGE_DOWNLOAD_PATH + os.sep + file.filename
+        input_img_path = os.path.join(IMAGE_DOWNLOAD_PATH,file.filename)
         with open(input_img_path, 'wb') as f:
             f.write(contents)
         
@@ -36,15 +37,16 @@ async def upload(file: UploadFile = File(...)):
     # IMG2TXT
 
     # Tokenizer
-    textArray = ["dog", "wind", "train"]
-
+    text = 'dog is barking in the backyard'
+    textArray = get_tokens(text)
+    print(textArray)
     # TXT2SOUND AND SOUNDSYNTH
     sound = textToSound(textArray)
 
 
     # COMBINE IMAGE+SOUND
-    addSoundToImage(input_img_path, TEMP_FILES_PATH + COMBINED_SOUND_FILENAME,
-                    TEMP_FILES_PATH+COMBINED_IMAGESOUND_FILENAME)
+    addSoundToImage(input_img_path, os.path.join(TEMP_FILES_PATH,COMBINED_SOUND_FILENAME),
+                    os.path.join(TEMP_FILES_PATH,COMBINED_IMAGESOUND_FILENAME))
     # RETURN VIDEO REQUEST
     return {"filename": file.filename, "contenttype": file.content_type}
 
