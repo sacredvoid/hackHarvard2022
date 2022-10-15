@@ -34,14 +34,23 @@ def textToSound(textArray):
     with open(jsonFileName) as json_file:
         intensityMap = json.load(json_file)
     
-    download_blob(GCP_BUCKET_NAME,filePath + jsonDict[textArray[0]][0], './')
-    sound1 = AudioSegment.from_file(filePath + jsonDict[textArray[0]][0])  # First sound from textArray
-    for t in textArray[1:]:
-        download_blob(GCP_BUCKET_NAME,filePath + jsonDict[t][0], './')
-        sound2 = AudioSegment.from_file(filePath + jsonDict[t][0])
-        sound2 = sound2 + intensityMap[t]
-        sound1 = sound1.overlay(sound2)
+    try:
+        download_blob(GCP_BUCKET_NAME,filePath + jsonDict[textArray[0]][0], './')
+        sound1 = AudioSegment.from_file(filePath + jsonDict[textArray[0]][0])  # First sound from textArray
+    except:
+        #Mapping doesnt exist, skip
+        pass
 
+    for t in textArray[1:]:
+        try:
+            download_blob(GCP_BUCKET_NAME,filePath + jsonDict[t][0], './')
+            sound2 = AudioSegment.from_file(filePath + jsonDict[t][0])
+            sound2 = sound2 + intensityMap[t]
+            sound1 = sound1.overlay(sound2)
+        except:
+            #Mapping doesnt exist, skip
+            pass
+        
     combinedSound = increaseDuration(sound1, 2)
 
     if not os.path.isdir(TEMP_FILES_PATH):

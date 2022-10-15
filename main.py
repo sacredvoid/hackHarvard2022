@@ -8,6 +8,8 @@ from gcp_helpers import upload_blob
 from sound_mapper_helpers import textToSound, addSoundToImage
 from data import IMAGE_DOWNLOAD_PATH, GCP_BUCKET_NAME, TEMP_FILES_PATH, COMBINED_SOUND_FILENAME, \
     COMBINED_IMAGESOUND_FILENAME
+from tokenizer import get_tokens
+from image_to_text import predict_step
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -28,7 +30,7 @@ async def upload(file: UploadFile = File(...)):
         os.mkdir(IMAGE_DOWNLOAD_PATH)
     try:
         contents = await file.read()
-        input_img_path = IMAGE_DOWNLOAD_PATH + os.sep + file.filename
+        input_img_path = os.path.join(IMAGE_DOWNLOAD_PATH,file.filename)
         with open(input_img_path, 'wb') as f:
             f.write(contents)
         
@@ -37,10 +39,13 @@ async def upload(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=str(e))
 
     # IMG2TXT
+    path = '/home/aakash/Downloads/photo-1599161954112-300ca11ca7da.jpeg'
+    text = predict_step([path])
 
     # Tokenizer
-    textArray = ["dog", "wind", "train"]
-
+    
+    textArray = get_tokens(text[0])
+    print(textArray)
     # TXT2SOUND AND SOUNDSYNTH
     sound = textToSound(textArray)
 
