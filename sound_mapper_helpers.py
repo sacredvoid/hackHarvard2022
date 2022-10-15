@@ -1,3 +1,4 @@
+from genericpath import isdir
 import json
 import os
 from pydub import AudioSegment
@@ -10,9 +11,6 @@ import json
 import random
 from moviepy.editor import AudioFileClip, ImageClip
 
-
-
-
 def increaseDuration(sound, factor):
     for i in range(0, factor):
         sound = sound.append(sound, crossfade=400)
@@ -21,23 +19,25 @@ def increaseDuration(sound, factor):
 
 def textToSound(textArray):
     filePath = SOUND_PATH
+    if not os.path.isdir(filePath):
+        os.makedirs(filePath)
 
     # Open JSON file to dictionary.
-    # fetch from API ///////////////////////////////////////////////////////////
     download_blob(GCP_BUCKET_NAME, JSON_DICT_PATH+JSON_FILENAME, './')
     jsonFileName = JSON_DICT_PATH + JSON_FILENAME
     with open(jsonFileName) as json_file:
         jsonDict = json.load(json_file)
 
     # Set loudness based on intensity map
-    # fetch from API ///////////////////////////////////////////////////////////
     download_blob(GCP_BUCKET_NAME, INTENSITY_MAP_PATH+INTENSITY_MAP_FILENAME, './')
     jsonFileName = INTENSITY_MAP_PATH + INTENSITY_MAP_FILENAME
     with open(jsonFileName) as json_file:
         intensityMap = json.load(json_file)
-
+    
+    download_blob(GCP_BUCKET_NAME,filePath + jsonDict[textArray[0]][0], './')
     sound1 = AudioSegment.from_file(filePath + jsonDict[textArray[0]][0])  # First sound from textArray
     for t in textArray[1:]:
+        download_blob(GCP_BUCKET_NAME,filePath + jsonDict[t][0], './')
         sound2 = AudioSegment.from_file(filePath + jsonDict[t][0])
         sound2 = sound2 + intensityMap[t]
         sound1 = sound1.overlay(sound2)
@@ -63,7 +63,7 @@ def createTextSoundJson(filePath):
     # Import excel
     df = pd.read_csv(filePath)
 
-    # Create Json
+    # Create Jsons
     jsonDict = {}
     for index, row in df.iterrows():
         if row['category'] not in jsonDict.keys():
