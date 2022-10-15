@@ -4,10 +4,13 @@ from fastapi.templating import Jinja2Templates
 from jinja2 import Template
 from pydantic import BaseModel
 import sys
+
+from pydub import AudioSegment
+
 from gcp_helpers import upload_blob
-from sound_mapper_helpers import textToSound, addSoundToImage
+from sound_mapper_helpers import textToSound, addSoundToImage, increaseDuration
 from data import IMAGE_DOWNLOAD_PATH, GCP_BUCKET_NAME, TEMP_FILES_PATH, COMBINED_SOUND_FILENAME, \
-    COMBINED_IMAGESOUND_FILENAME
+    COMBINED_IMAGESOUND_FILENAME, NOISE_FILE_PATH
 from tokenizer import get_tokens
 from image_to_text import predict_step
 
@@ -44,16 +47,27 @@ async def upload(file: UploadFile = File(...)):
 
     # Tokenizer
     textArray = get_tokens(text[0])
+    #textArray.append("wind")
 
     # TXT2SOUND AND SOUNDSYNTH
     sound = textToSound(textArray)
+    if sound == -1:
+        sound1 = AudioSegment.from_file(NOISE_FILE_PATH + "noise.wav")
+        combinedSound = increaseDuration(sound1, 2)
+        if not os.path.isdir(TEMP_FILES_PATH):
+            os.mkdir(TEMP_FILES_PATH)
+        combinedSound.export(TEMP_FILES_PATH + COMBINED_SOUND_FILENAME, format='wav')
 
     # COMBINE IMAGE+SOUND
     addSoundToImage(input_img_path, os.path.join(TEMP_FILES_PATH,COMBINED_SOUND_FILENAME),
                     os.path.join(TEMP_FILES_PATH,COMBINED_IMAGESOUND_FILENAME))
 
     upload_blob(GCP_BUCKET_NAME, os.path.join(TEMP_FILES_PATH,COMBINED_IMAGESOUND_FILENAME))
-    # RETURN VIDEO REQUEST
 
+    # DELETE AUDIO
+    os.remove(TEMP_FILES_PATH + COMBINED_SOUND_FILENAME)
+
+    # RETURN VIDEO REQUEST
     return {"filename": file.filename, "contenttype": file.content_type}
+
 
