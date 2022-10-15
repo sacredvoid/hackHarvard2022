@@ -1,0 +1,44 @@
+<script type="text/javascript">
+    function previewFile() {
+        const preview = document.querySelector('img');
+        var file = document.getElementById('fileInput').files[0];
+        const reader = new FileReader();
+        reader.addEventListener("load", function() {
+            preview.src = reader.result; // show image in <img> tag
+        }, false);
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function uploadFile(file) {
+        var file = document.getElementById('fileInput').files[0];
+        if (file) {
+            var formData = new FormData();
+            formData.append('file', file);
+            fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("vid").style.display = "inline";
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+    }
+</script>
+<input type="file" id="fileInput" onchange="previewFile()"><br>
+<input type="button" value="Upload Image" onclick="uploadFile()">
+Input:<br>
+<img height="200"> <br>
+Output:<br>
+<video id="vid" controls width="250" hidden>
+    <source src="https://storage.googleapis.com/audio-data-hack/combinedImageSound.mp4"
+            type="video/mp4">
+    <!-- Download the 
+    <a href="./databaseFiles/tempFiles/combinedImageSound.mp4">MP4</a>
+    video. -->
+</video>
