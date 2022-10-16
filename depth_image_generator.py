@@ -89,7 +89,6 @@ def predict(model, images, minDepth=10, maxDepth=1000, batch_size=2):
 def resizeimage(path):
     img = imread(path)
     resized_img = cv2.resize(img, (640, 480))
-    resized_img = resize(img, (640, 480), preserve_range=True, mode='reflect', anti_aliasing=True)
     imsave(TEMP_FILES_PATH + "test.png", resized_img)
 
 def generate_depth_image(path):
@@ -105,6 +104,8 @@ def generate_depth_image(path):
     outputs = predict(model, inputs)
 
     viz = display_images(outputs.copy(), inputs.copy())
-    plt.savefig(IMAGE_DOWNLOAD_PATH + "inputdepthimage.jpg")
+    plt.imshow(viz)
     plt.figure(figsize=(10, 5))
+    plt.savefig(IMAGE_DOWNLOAD_PATH + "inputdepthimage.jpg")
+    plt.imshow(viz)
 
