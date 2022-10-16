@@ -65,13 +65,13 @@ async def upload(file: UploadFile = File(...)):
     addSoundToImage(input_img_path, os.path.join(TEMP_FILES_PATH , COMBINED_SOUND_FILENAME),
                     os.path.join(TEMP_FILES_PATH, COMBINED_IMAGESOUND_FILENAME))
 
+    # FIND HEAT MAP AND UPLOAD TO CLOUD
+    #generate_depth_image(input_img_path1)
 
     # UPLOAD TO CLOUD
     upload_blob(GCP_BUCKET_NAME, os.path.join(TEMP_FILES_PATH, COMBINED_IMAGESOUND_FILENAME))
     upload_blob(GCP_BUCKET_NAME, IMAGE_DOWNLOAD_PATH + "inputimage.jpg")
-
-    # FIND HEAT MAP AND UPLOAD TO CLOUD
-    # MAKE ANIMATION AND UPLOAD TO CLOUD
+    #upload_blob(GCP_BUCKET_NAME, IMAGE_DOWNLOAD_PATH + "inputdepthimage.jpg")
 
     # DELETE AUDIO
     os.remove(TEMP_FILES_PATH + COMBINED_SOUND_FILENAME)
