@@ -105,7 +105,7 @@ def generate_depth_image(path):
 
     viz = display_images(outputs.copy(), inputs.copy())
     plt.imshow(viz)
-    plt.figure(figsize=(10, 5))
-    plt.savefig(IMAGE_DOWNLOAD_PATH + "inputdepthimage.jpg")
+    fig = plt.figure(figsize=(10, 5))
     plt.imshow(viz)
+    fig.savefig(IMAGE_DOWNLOAD_PATH + "inputdepthimage.jpg")
 
