@@ -39,8 +39,9 @@ def textToSound(textArray):
     sound1 = 0
     for t in textArray:
         try:
-            download_blob(GCP_BUCKET_NAME, filePath + jsonDict[t][0], './')
-            sound1 = AudioSegment.from_file(filePath + jsonDict[t][0])  # First sound from textArray
+            v = random .randint(0,len(jsonDict[t])-1)
+            download_blob(GCP_BUCKET_NAME, filePath + jsonDict[t][v], './')
+            sound1 = AudioSegment.from_file(filePath + jsonDict[t][v])  # First sound from textArray
             break
         except:
             #Mapping doesnt exist, skip
@@ -52,8 +53,9 @@ def textToSound(textArray):
 
     for t in textArray[1:]:
         try:
-            download_blob(GCP_BUCKET_NAME,filePath + jsonDict[t][0], './')
-            sound2 = AudioSegment.from_file(filePath + jsonDict[t][0])
+            v = random.randint(0, len(jsonDict[t]) - 1)
+            download_blob(GCP_BUCKET_NAME,filePath + jsonDict[t][v], './')
+            sound2 = AudioSegment.from_file(filePath + jsonDict[t][v])
             sound2 = sound2 + intensityMap[t]
             sound1 = sound1.overlay(sound2)
         except:

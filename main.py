@@ -1,11 +1,13 @@
 import os
 from fastapi import FastAPI, HTTPException, File, Request, UploadFile
 from fastapi.templating import Jinja2Templates
+from flask import render_template
 from jinja2 import Template
 from pydantic import BaseModel
 import sys
 
 from pydub import AudioSegment
+from starlette.responses import RedirectResponse
 
 from gcp_helpers import upload_blob
 from sound_mapper_helpers import textToSound, addSoundToImage, increaseDuration
@@ -21,11 +23,14 @@ class UploadConfirmation(BaseModel):
     filename: str
     contenttype: str
 
-
 @app.get("/")
 def main(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
-
+    # textlink
+    videolink = "https://storage.googleapis.com/audio-data-hack/combinedImageSound.mp4"
+    input = ""
+    # heatmaplink
+    # animationlink
+    return templates.TemplateResponse("index.html", {"request": request, "input":input, "video":videolink})
 
 @app.post("/upload/", response_model=UploadConfirmation)
 async def upload(file: UploadFile = File(...)):
@@ -35,6 +40,10 @@ async def upload(file: UploadFile = File(...)):
         contents = await file.read()
         input_img_path = os.path.join(IMAGE_DOWNLOAD_PATH,file.filename)
         with open(input_img_path, 'wb') as f:
+            f.write(contents)
+
+        input_img_path1 = os.path.join(IMAGE_DOWNLOAD_PATH, "inputimage.jpg")
+        with open(input_img_path1, 'wb') as f:
             f.write(contents)
         
     except Exception:
@@ -57,13 +66,19 @@ async def upload(file: UploadFile = File(...)):
         combinedSound.export(TEMP_FILES_PATH + COMBINED_SOUND_FILENAME, format='wav')
 
     # COMBINE IMAGE+SOUND
-    addSoundToImage(input_img_path, TEMP_FILES_PATH + COMBINED_SOUND_FILENAME,
-                    TEMP_FILES_PATH + COMBINED_IMAGESOUND_FILENAME)
+    addSoundToImage(input_img_path, os.path.join(TEMP_FILES_PATH , COMBINED_SOUND_FILENAME),
+                    os.path.join(TEMP_FILES_PATH, COMBINED_IMAGESOUND_FILENAME))
 
-    upload_blob(GCP_BUCKET_NAME, TEMP_FILES_PATH + COMBINED_IMAGESOUND_FILENAME)
+
+    # UPLOAD TO CLOUD
+    upload_blob(GCP_BUCKET_NAME, os.path.join(TEMP_FILES_PATH, COMBINED_IMAGESOUND_FILENAME))
+    upload_blob(GCP_BUCKET_NAME, IMAGE_DOWNLOAD_PATH + "inputimage.jpg")
+
+    # FIND HEAT MAP AND UPLOAD TO CLOUD
+    # MAKE ANIMATION AND UPLOAD TO CLOUD
 
     # DELETE AUDIO
-    #os.remove(TEMP_FILES_PATH + COMBINED_SOUND_FILENAME)
+    os.remove(TEMP_FILES_PATH + COMBINED_SOUND_FILENAME)
 
     # RETURN VIDEO REQUEST
     return {"filename": file.filename, "contenttype": file.content_type}
