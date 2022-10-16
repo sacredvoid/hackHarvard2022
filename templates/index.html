@@ -24,14 +24,23 @@
                 .then(response => response.json())
                 .then(data => {
                     var vid_element = document.getElementById("vid");
-                    if(vid_element.firstChild){
-                        var child = vid_element.firstChild;
-                        vid_element.removeChild(child)
-                    }
+                    
+                    // if(vid_element.firstChild){
+                    //     var child = vid_element.firstChild;
+                    //     vid_element.removeChild(child)
+                    // }
                     var source = document.createElement('source');
-                    source.setAttribute('src','https://storage.googleapis.com/audio-data-hack/combinedImageSound.mp4')
+                    source.setAttribute('src',data.linkToFinalVideo)
                     source.setAttribute('type','video/mp4')
-                    vid_element.style.display = "inline"
+                    var depth_map = document.getElementById("vid1").src = data.linkToDepthMap;
+                    const para = document.createElement("p");
+                    const node = document.createTextNode(data.img2text);
+
+                    var ipimg = document.getElementById('ipimg').style.display = "inline";
+
+                    para.appendChild(node);
+                    var textDiv = document.getElementById('textDesc');
+                    textDiv.appendChild(para);
                     vid_element.appendChild(source);
                     vid_element.play();
 
@@ -78,7 +87,7 @@
         <br>
         <div class="row">
             <div class="col">
-                <img src = "https://storage.googleapis.com/audio-data-hack/inputimage.jpg" height="200"> <br>
+                <img src = "https://storage.googleapis.com/audio-data-hack/inputimage.jpg" height="200" hidden id="ipimg"> <br>
             </div>
         </div>
         <br>
@@ -94,20 +103,18 @@
         <div class="row">
             <div class="col">
                 <h4>Text Description Generated:</h4> <br>
-                <div id="text">
-                    {{ textarray }}
-                </div>
+                <div id="textDesc"><h3></h3></div>
             </div>
         </div>
         <div class="row">
             <div class="row">
                 <div class="col-6">
                     <h4>Depth Map (identifies intensities)</h4><br>
-                    <video id="vid1" controls width="250" hidden></video>
+                    <image id="vid1" width="300" height="200" src="https://storage.googleapis.com/audio-data-hack/inputdepthimage.jpg"></image>
                 </div>
                 <div class="col-6">
-                    <h4>Video Output</h4><br>
-                    <video id="vid" controls width="250"  type="video/mp4" ></video>
+                    <h4>Video Output</h4><br><br><br><br>
+                    <video id="vid" controls width="250"  type="video/mp4"></video>
                 </div>
             </div>
         </div>

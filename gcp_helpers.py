@@ -1,6 +1,6 @@
 from google.cloud import storage
 import os
-from data import GCP_CREDENTIALS
+from data import GCP_CREDENTIALS, STORAGE_LINK_HEADER
 
 def init_client():
     storage_client = storage.Client.from_service_account_json(GCP_CREDENTIALS)
@@ -52,3 +52,7 @@ def download_blob(bucket_name, source_blob_name, destination_path):
             source_blob_name, bucket_name, destination_file_name
         )
     )
+
+def construct_storage_link(bucket_name, object_name):
+    return STORAGE_LINK_HEADER+bucket_name+'/'+object_name
+    # https://storage.googleapis.com/audio-data-hack/depthmodel.h5
