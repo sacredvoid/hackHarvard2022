@@ -1,0 +1,123 @@
+<script type="text/javascript">
+
+    function previewFile() {
+        const preview = document.querySelector('img');
+        var file = document.getElementById('fileInput').files[0];
+        const reader = new FileReader();
+        reader.addEventListener("load", function() {
+            preview.src = reader.result; // show image in <img> tag
+        }, false);
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function uploadFile(file) {
+        var file = document.getElementById('fileInput').files[0];
+        if (file) {
+            var formData = new FormData();
+            formData.append('file', file);
+            fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    var vid_element = document.getElementById("vid");
+                    
+                    // if(vid_element.firstChild){
+                    //     var child = vid_element.firstChild;
+                    //     vid_element.removeChild(child)
+                    // }
+                    var source = document.createElement('source');
+                    source.setAttribute('src',data.linkToFinalVideo)
+                    source.setAttribute('type','video/mp4')
+                    var depth_map = document.getElementById("vid1").src = data.linkToDepthMap;
+                    const para = document.createElement("p");
+                    const node = document.createTextNode(data.img2text);
+
+                    var ipimg = document.getElementById('ipimg').style.display = "inline";
+
+                    para.appendChild(node);
+                    var textDiv = document.getElementById('textDesc');
+                    textDiv.appendChild(para);
+                    vid_element.appendChild(source);
+                    vid_element.play();
+
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+    }
+</script>
+<HTML>
+<HEAD>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+</HEAD>
+<BODY>
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">Mind-S-Eye</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item active">
+                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+    <div class="container">
+        <h3>Input Image:</h3><br>
+        <div class="row">
+            <div class="col">
+                <input class="btn" type="file" id="fileInput" onchange="previewFile()">
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="row">
+            <div class="col">
+                <img src = "https://storage.googleapis.com/audio-data-hack/inputimage.jpg" height="200" hidden id="ipimg"> <br>
+            </div>
+        </div>
+        <br>
+        <br>
+        <div class="row">
+            <div class="col">
+                <input class="btn btn-primary" type="button" value="Upload Image" onclick="uploadFile()">
+            </div>
+        </div>
+        <br>
+        <br>
+        <h3>Output:</h3><br>
+        <div class="row">
+            <div class="col">
+                <h4>Text Description Generated:</h4> <br>
+                <div id="textDesc"><h3></h3></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="row">
+                <div class="col-6">
+                    <h4>Depth Map (identifies intensities)</h4><br>
+                    <image id="vid1" width="300" height="200" src="https://storage.googleapis.com/audio-data-hack/inputdepthimage.jpg"></image>
+                </div>
+                <div class="col-6">
+                    <h4>Video Output</h4><br><br><br><br>
+                    <video id="vid" controls width="250"  type="video/mp4"></video>
+                </div>
+            </div>
+        </div>
+    </div>
+</BODY>
+</HTML>

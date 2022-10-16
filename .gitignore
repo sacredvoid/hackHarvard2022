@@ -1,6 +1,7 @@
 .idea
 .ipynb_checkpoints
 .mypy_cache
+*.h5
 .vscode
 __pycache__
 .pytest_cache
@@ -19,9 +20,12 @@ docs_build
 venv
 docs.zip
 archive.zip
+databaseFiles/Dataset
+databaseFiles/tempFiles
 
 # vim temporary files
 *~
 .*.sw?
 
-uploaded_images
+uploadedImages
+plasma-myth-365608-02f3f88329f7.json
