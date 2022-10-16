@@ -6,7 +6,7 @@ import sys
 
 from pydub import AudioSegment
 
-from Backend.hackHarvard2022.img2text.image_to_text import predict_step
+from img2text.image_to_text import predict_step
 from depth_image_generator import generate_depth_image
 from gcp_helpers import upload_blob
 from post_req_helper import send_post
