@@ -41,7 +41,7 @@ async def upload(file: UploadFile = File(...)):
         input_img_path = os.path.join(IMAGE_DOWNLOAD_PATH,file.filename)
         with open(input_img_path, 'wb') as f:
             f.write(contents)
-
+        
         input_img_path1 = os.path.join(IMAGE_DOWNLOAD_PATH, "inputimage.jpg")
         with open(input_img_path1, 'wb') as f:
             f.write(contents)
@@ -49,13 +49,7 @@ async def upload(file: UploadFile = File(...)):
     except Exception:
         e = sys.exc_info()[1]
         raise HTTPException(status_code=500, detail=str(e))
-
-    # IMG2TXT
-<<<<<<< HEAD
-    text = predict_step([input_img_path])
-=======
     text = predict_step(input_img_path)
->>>>>>> 820e04ef2fe348ca5fb2476e53eba4f212790417
 
     # Tokenizer
     textArray = get_tokens(text)
@@ -86,5 +80,3 @@ async def upload(file: UploadFile = File(...)):
 
     # RETURN VIDEO REQUEST
     return {"filename": file.filename, "contenttype": file.content_type}
-
-
