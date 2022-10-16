@@ -6,6 +6,8 @@ import sys
 
 from pydub import AudioSegment
 
+from Backend.hackHarvard2022.img2text.image_to_text import predict_step
+from depth_image_generator import generate_depth_image
 from gcp_helpers import upload_blob
 from post_req_helper import send_post
 from sound_mapper_helpers import textToSound, addSoundToImage, increaseDuration
@@ -46,11 +48,14 @@ async def upload(file: UploadFile = File(...)):
     except Exception:
         e = sys.exc_info()[1]
         raise HTTPException(status_code=500, detail=str(e))
-    
-    # move to api call
-    text = send_post(IMG2TEXT_API, input_img_path)
+
+    text = predict_step(input_img_path)
+    print(text)
+
+
     # Tokenizer
     textArray = get_tokens(text)
+    print(textArray)
     
     # TXT2SOUND AND SOUNDSYNTH
     sound = textToSound(textArray)
@@ -66,12 +71,12 @@ async def upload(file: UploadFile = File(...)):
                     os.path.join(TEMP_FILES_PATH, COMBINED_IMAGESOUND_FILENAME))
 
     # FIND HEAT MAP AND UPLOAD TO CLOUD
-    #generate_depth_image(input_img_path1)
+    generate_depth_image(input_img_path1)
 
     # UPLOAD TO CLOUD
     upload_blob(GCP_BUCKET_NAME, os.path.join(TEMP_FILES_PATH, COMBINED_IMAGESOUND_FILENAME))
     upload_blob(GCP_BUCKET_NAME, IMAGE_DOWNLOAD_PATH + "inputimage.jpg")
-    #upload_blob(GCP_BUCKET_NAME, IMAGE_DOWNLOAD_PATH + "inputdepthimage.jpg")
+    upload_blob(GCP_BUCKET_NAME, IMAGE_DOWNLOAD_PATH + "inputdepthimage.jpg")
 
     # DELETE AUDIO
     os.remove(TEMP_FILES_PATH + COMBINED_SOUND_FILENAME)
