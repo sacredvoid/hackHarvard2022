@@ -1,20 +1,17 @@
 import os
 from fastapi import FastAPI, HTTPException, File, Request, UploadFile
 from fastapi.templating import Jinja2Templates
-from flask import render_template
-from jinja2 import Template
 from pydantic import BaseModel
 import sys
 
 from pydub import AudioSegment
-from starlette.responses import RedirectResponse
 
 from gcp_helpers import upload_blob
+from post_req_helper import send_post
 from sound_mapper_helpers import textToSound, addSoundToImage, increaseDuration
 from data import IMAGE_DOWNLOAD_PATH, GCP_BUCKET_NAME, TEMP_FILES_PATH, COMBINED_SOUND_FILENAME, \
-    COMBINED_IMAGESOUND_FILENAME, NOISE_FILE_PATH
+    COMBINED_IMAGESOUND_FILENAME, NOISE_FILE_PATH, IMG2TEXT_API
 from tokenizer import get_tokens
-from img2text.image_to_text import predict_step
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -49,8 +46,9 @@ async def upload(file: UploadFile = File(...)):
     except Exception:
         e = sys.exc_info()[1]
         raise HTTPException(status_code=500, detail=str(e))
-    text = predict_step(input_img_path)
-
+    
+    # move to api call
+    text = send_post(IMG2TEXT_API, input_img_path)
     # Tokenizer
     textArray = get_tokens(text)
     

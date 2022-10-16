@@ -12,3 +12,4 @@ NOISE_FILE_PATH = "databaseFiles/Dataset/"
 
 GCP_BUCKET_NAME = "audio-data-hack"
 GCP_CREDENTIALS = "plasma-myth-365608-02f3f88329f7.json"
+IMG2TEXT_API = 'https://img2txt-kzbiulmznq-uc.a.run.app/img2txt/'

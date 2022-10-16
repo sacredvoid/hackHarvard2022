@@ -1,11 +1,10 @@
-from genericpath import isdir
 import json
 import os
 from pydub import AudioSegment
 
 from gcp_helpers import download_blob
 from data import SOUND_PATH, JSON_DICT_PATH, TEMP_FILES_PATH, INTENSITY_MAP_PATH, GCP_BUCKET_NAME, \
-    COMBINED_SOUND_FILENAME, JSON_FILENAME, INTENSITY_MAP_FILENAME, NOISE_FILE_PATH
+    COMBINED_SOUND_FILENAME, JSON_FILENAME, INTENSITY_MAP_FILENAME
 import pandas as pd
 import json
 import random

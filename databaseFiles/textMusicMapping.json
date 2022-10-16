@@ -2098,5 +2098,86 @@
         "5-216213-A-13.wav",
         "5-216214-A-13.wav",
         "5-216216-A-13.wav"
+    ],
+    "jump": [
+        "464336__ziggler-games__the-sound-of-the-jump.wav\n"
+    ],
+    "water": [
+        "634995__rorhe__dropping-water-v1.wav\n"
+    ],
+    "walk": [
+        "419170__14gpanskahonc-petr__05-man-walking-leaves.wav\n"
+    ],
+    "run": [
+        "379323__13fpanska-marval-lukas__run.wav\n"
+    ],
+    "grass": [
+        "643348__tennisers__grass-noises.wav\n"
+    ],
+    "snow": [
+        "421022__inspectorj__running-snow-a.wav\n"
+    ],
+    "beach": [
+        "530704__szegvari__water-wave-beach-peoples-ships-field-recording-200815-0038.wav  \n"
+    ],
+    "bike": [
+        "636541__l-finck__bike-01.wav  \n"
+    ],
+    "mountain": [
+        "127352__dobroide__20110823-mountain-01.wav\n"
+    ],
+    "camera": [
+        "326724__rynostols__digitalcamera.wav\n"
+    ],
+    "pool": [
+        "352101__inspectorj__splash-jumping-a.wav\n"
+    ],
+    "tree": [
+        "244939__spoonbender__wind-through-trees-1.wav\n"
+    ],
+    "swim": [
+        "317067__robinhood76__05913-swimming-loop.wav \n"
+    ],
+    "swing": [
+        "594145__kiano-ow__swing-sound.wav\n"
+    ],
+    "park": [
+        "268903__yonts__city-park-tel-aviv-israel.wav\n"
+    ],
+    "skateboard": [
+        "507714__prometheus888__skateboard.wav\n"
+    ],
+    "wave": [
+        "627355__klankbeeld__wave-sand-beach-007.wav  \n"
+    ],
+    "car": [
+        "522222__nox-sound__vehicle-car-passby-exterior-mono.wav  \n"
+    ],
+    "picture": [
+        " 326724__rynostols__digitalcamera.wav\n"
+    ],
+    "hill": [
+        "127352__dobroide__20110823-mountain-01.wav\n"
+    ],
+    "bicycle": [
+        "636541__l-finck__bike-01.wav\n"
+    ],
+    "grassy": [
+        "643348__tennisers__grass-noises.wav\n"
+    ],
+    "sand": [
+        "452797__cloe-king__sand-in-bag.wav\n"
+    ],
+    "ocean": [
+        "530704__szegvari__water-wave-beach-peoples-ships-field-recording-200815-0038.wav  \n"
+    ],
+    "baby": [
+        "46959__reinsamba__baby-voice2.wav\n"
+    ],
+    "tennis": [
+        "533410__drivr3joe__tennisballbounce.wav  \n"
+    ],
+    "basketball": [
+        "460649__noamp2003__basketball.wav\n"
     ]
 }
