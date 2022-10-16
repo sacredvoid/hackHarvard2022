@@ -5,7 +5,7 @@ from pydub import AudioSegment
 
 from gcp_helpers import download_blob
 from data import SOUND_PATH, JSON_DICT_PATH, TEMP_FILES_PATH, INTENSITY_MAP_PATH, GCP_BUCKET_NAME, \
-    COMBINED_SOUND_FILENAME, JSON_FILENAME, INTENSITY_MAP_FILENAME
+    COMBINED_SOUND_FILENAME, JSON_FILENAME, INTENSITY_MAP_FILENAME, NOISE_FILE_PATH
 import pandas as pd
 import json
 import random
@@ -18,6 +18,7 @@ def increaseDuration(sound, factor):
 
 
 def textToSound(textArray):
+    print(textArray)
     filePath = SOUND_PATH
     if not os.path.isdir(filePath):
         os.makedirs(filePath)
@@ -33,26 +34,38 @@ def textToSound(textArray):
     jsonFileName = INTENSITY_MAP_PATH + INTENSITY_MAP_FILENAME
     with open(jsonFileName) as json_file:
         intensityMap = json.load(json_file)
-    
-    try:
-        download_blob(GCP_BUCKET_NAME,filePath + jsonDict[textArray[0]][0], './')
-        sound1 = AudioSegment.from_file(filePath + jsonDict[textArray[0]][0])  # First sound from textArray
-    except:
-        #Mapping doesnt exist, skip
-        pass
+
+    c = 0
+    sound1 = 0
+    for t in textArray:
+        try:
+            v = random .randint(0,len(jsonDict[t])-1)
+            download_blob(GCP_BUCKET_NAME, filePath + jsonDict[t][v], './')
+            sound1 = AudioSegment.from_file(filePath + jsonDict[t][v])  # First sound from textArray
+            break
+        except:
+            #Mapping doesnt exist, skip
+            print("not found ", t)
+            c+=1
+
+    if c==len(textArray):
+        return -1
 
     for t in textArray[1:]:
         try:
-            download_blob(GCP_BUCKET_NAME,filePath + jsonDict[t][0], './')
-            sound2 = AudioSegment.from_file(filePath + jsonDict[t][0])
+            v = random.randint(0, len(jsonDict[t]) - 1)
+            download_blob(GCP_BUCKET_NAME,filePath + jsonDict[t][v], './')
+            sound2 = AudioSegment.from_file(filePath + jsonDict[t][v])
             sound2 = sound2 + intensityMap[t]
             sound1 = sound1.overlay(sound2)
         except:
             #Mapping doesnt exist, skip
-            pass
-        
-    combinedSound = increaseDuration(sound1, 2)
+            print("not found ", t)
 
+    if sound1 == 0:
+        return -1
+
+    combinedSound = increaseDuration(sound1, 2)
     if not os.path.isdir(TEMP_FILES_PATH):
         os.mkdir(TEMP_FILES_PATH)
     combinedSound.export(TEMP_FILES_PATH + COMBINED_SOUND_FILENAME, format='wav')
