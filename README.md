@@ -1,5 +1,5 @@
 # ReAlive @ hackHarvard2022
-### [Winner: 2nd place for 'Best use of Google Cloud']
+### [Winner: 'Best use of Google Cloud']
 
 This is the code for our winning submission at HackHarvard '22
 Our project is called 'ReAlive', a word-play on bringing back something to life, also 'real' and 'alive'. You can find the links to [presentation](https://drive.google.com/file/d/1zgArxPzYwmf62a5V845VKVdJ5HAEgn4n/view?usp=sharing), [Hack Harvard Devpost](https://devpost.com/software/realive) and [video demo](https://docs.google.com/presentation/d/1C7Kio21tNKrou9_KYsCsJFrpCFdYBvDT/edit?usp=sharing&ouid=117424272263224212691&rtpof=true&sd=true) here.
